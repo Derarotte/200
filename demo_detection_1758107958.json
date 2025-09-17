@@ -1,0 +1,13 @@
+{
+  "timestamp": 1758107958.8103895,
+  "total_packets_processed": 177,
+  "total_anomalies_detected": 0,
+  "recent_anomalies": 0,
+  "anomaly_types": {},
+  "baseline_established": false,
+  "model_trained": false,
+  "detection_accuracy": {
+    "statistical_detector_active": false,
+    "ml_detector_active": false
+  }
+}

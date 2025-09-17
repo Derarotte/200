@@ -38,7 +38,7 @@ class NetworkMonitor:
 
     def start_monitoring(self):
         """启动监控数据收集"""
-        print("Starting network monitoring...")
+        print("开始网络监控...")
         self.simulation_active = True
         self.simulation_thread = threading.Thread(target=self._simulate_data)
         self.simulation_thread.daemon = True
@@ -426,17 +426,17 @@ DASHBOARD_HTML = """
 </head>
 <body>
     <div class="header">
-        <h1>🌐 SDN + AI Network Monitor</h1>
+        <h1>SDN + AI Network Monitor</h1>
         <p>Real-time Network Traffic Analysis & Anomaly Detection</p>
     </div>
 
     <div class="container">
         <div id="anomaly-alert" class="alert" style="display: none;">
-            <strong>⚠️ NETWORK ANOMALY DETECTED!</strong> <span id="alert-details"></span>
+            <strong>网络异常检测!</strong> <span id="alert-details"></span>
         </div>
 
         <div class="control-panel">
-            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn" onclick="refreshData()">Refresh Data</button>
             <button class="btn" onclick="toggleMonitoring()" id="monitor-btn">⏸️ Pause Monitoring</button>
             <button class="btn btn-danger" onclick="clearAlerts()">🧹 Clear Alerts</button>
             <span style="margin-left: 20px;">
@@ -683,7 +683,7 @@ def api_health():
 
 def run_dashboard(host='0.0.0.0', port=8080, debug=False):
     """启动监控仪表盘"""
-    print(f"Starting network monitoring dashboard on http://{host}:{port}")
+    print(f"开始启动网络监控面板 http://{host}:{port}")
     print("Dashboard features:")
     print("- Real-time network traffic visualization")
     print("- Anomaly detection alerts and timeline")

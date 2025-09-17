@@ -1,0 +1,52 @@
+{
+  "timestamp": 1758107958.8101985,
+  "topology": {
+    "switches": 4,
+    "links": 6,
+    "hosts": 6
+  },
+  "traffic": {
+    "total_flows": 44,
+    "total_packets": 161,
+    "total_bytes": 119814,
+    "blocked_flows": 0
+  },
+  "switches": {
+    "s1": {
+      "switch_id": "s1",
+      "packets_processed": 76,
+      "bytes_processed": 67093,
+      "flows_installed": 12,
+      "table_misses": 0,
+      "flow_table_size": 12,
+      "active_flows": 11
+    },
+    "s2": {
+      "switch_id": "s2",
+      "packets_processed": 72,
+      "bytes_processed": 51206,
+      "flows_installed": 18,
+      "table_misses": 0,
+      "flow_table_size": 18,
+      "active_flows": 9
+    },
+    "s3": {
+      "switch_id": "s3",
+      "packets_processed": 13,
+      "bytes_processed": 1515,
+      "flows_installed": 12,
+      "table_misses": 0,
+      "flow_table_size": 12,
+      "active_flows": 3
+    },
+    "s4": {
+      "switch_id": "s4",
+      "packets_processed": 0,
+      "bytes_processed": 0,
+      "flows_installed": 2,
+      "table_misses": 0,
+      "flow_table_size": 2,
+      "active_flows": 0
+    }
+  }
+}

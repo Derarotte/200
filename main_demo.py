@@ -125,7 +125,7 @@ class SDNAIDemo:
             if not self.running:
                 break
 
-            print(f"\n📋 阶段 {i}/{len(self.demo_phases)}: {phase['name']}")
+            print(f"\n阶段 {i}/{len(self.demo_phases)}: {phase['name']}")
             print(f"   持续时间: {phase['duration']}秒")
             print(f"   流量模式: {', '.join(phase['patterns'])}")
 
@@ -159,7 +159,7 @@ class SDNAIDemo:
 
     def run_performance_tests(self):
         """运行性能测试"""
-        print("\n📊 运行性能测试...")
+        print("\n运行性能测试...")
 
         try:
             # 获取最终统计
@@ -172,20 +172,20 @@ class SDNAIDemo:
             print("="*60)
 
             # 网络性能
-            print("\n🌐 网络性能:")
+            print("\n网络性能:")
             print(f"  总流量: {network_stats['traffic']['total_flows']} 流")
             print(f"  总数据包: {network_stats['traffic']['total_packets']} 包")
             print(f"  总字节数: {network_stats['traffic']['total_bytes']:,} 字节")
             print(f"  阻断流量: {network_stats['traffic']['blocked_flows']} 流")
 
             # 流量生成性能
-            print("\n📈 流量生成:")
+            print("\n流量生成:")
             print(f"  生成数据包: {traffic_stats['total_packets_generated']} 包")
             print(f"  生成字节数: {traffic_stats['total_bytes_generated']:,} 字节")
             print(f"  活跃模式: {traffic_stats['active_patterns']} 个")
 
             # AI检测性能
-            print("\n🤖 AI检测性能:")
+            print("\nAI检测性能:")
             print(f"  处理数据包: {detection_summary['total_packets_processed']} 包")
             print(f"  检测异常: {detection_summary['total_anomalies_detected']} 次")
             print(f"  近期异常: {detection_summary['recent_anomalies']} 次")
@@ -222,12 +222,12 @@ class SDNAIDemo:
         dashboard_thread.start()
         self.demo_threads.append(dashboard_thread)
 
-        print("🌐 Web监控界面已启动: http://localhost:8080")
+        print("Web监控界面已启动: http://localhost:8080")
 
     def run_complete_demo(self):
         """运行完整演示"""
         try:
-            print("🚀 启动SDN + AI网络异常检测系统演示")
+            print("启动SDN + AI网络异常检测系统演示")
             print("技术栈: SDN网络模拟 + 机器学习 + 实时监控")
             print("作业要求: ✅ SDN ✅ P4概念 ✅ AI ✅ 异常检测 ✅ 演示界面")
 
@@ -256,7 +256,7 @@ class SDNAIDemo:
             self.run_performance_tests()
 
             # 6. 保持系统运行供查看
-            print("\n💡 演示完成！系统将继续运行以供查看...")
+            print("\n演示完成！系统将继续运行以供查看...")
             print("   监控界面: http://localhost:8080")
             print("   按 Ctrl+C 退出演示")
 
@@ -277,7 +277,7 @@ class SDNAIDemo:
 
     def cleanup(self):
         """清理资源"""
-        print("\n🧹 清理系统资源...")
+        print("\n清理系统资源...")
 
         try:
             # 停止流量生成
@@ -317,7 +317,7 @@ class SDNAIDemo:
                 import json
                 json.dump(detection_summary, f, indent=2)
 
-            print(f"📁 演示结果已保存到 demo_*_{timestamp}.json 文件")
+            print(f"演示结果已保存到 demo_*_{timestamp}.json 文件")
 
         except Exception as e:
             print(f"保存演示结果时发生错误: {e}")

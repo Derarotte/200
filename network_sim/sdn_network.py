@@ -152,7 +152,7 @@ class SDNController:
 
     def install_proactive_flows(self):
         """安装主动流表规则 - SDN的预配置能力"""
-        print("Controller: Installing proactive flow rules...")
+        print("控制器: 正在安装主动流规则...")
 
         # 为每个交换机安装基础转发规则
         for switch_id, switch in self.switches.items():
@@ -174,7 +174,7 @@ class SDNController:
 
     def handle_packet_in(self, switch_id: str, packet: NetworkPacket):
         """处理PacketIn消息 - 控制器的智能决策"""
-        print(f"Controller: PacketIn from {switch_id}, Flow: {packet.flow_id}")
+        print(f"控制器: 来自{switch_id}的数据包输入, 流: {packet.flow_id}")
 
         # 安全检查
         if self._is_malicious_flow(packet):
@@ -236,7 +236,7 @@ class SDNController:
         try:
             # 使用网络拓扑计算最短路径
             path = nx.shortest_path(self.topology, src_switch, dst_switch)
-            print(f"Controller: Calculated path {src_switch} -> {dst_switch}: {' -> '.join(path)}")
+            print(f"控制器: 计算路径 {src_switch} -> {dst_switch}: {' -> '.join(path)}")
             return path
         except nx.NetworkXNoPath:
             print(f"Controller: No path found between {src_switch} and {dst_switch}")
@@ -337,7 +337,7 @@ class SDNNetwork:
 
     def setup_topology(self):
         """创建4交换机6主机的网络拓扑"""
-        print("Setting up SDN network topology...")
+        print("正在设置SDN网络拓扑...")
 
         # 创建4个交换机
         switches = []
@@ -370,10 +370,10 @@ class SDNNetwork:
         # 安装基础流表规则
         self.controller.install_proactive_flows()
 
-        print("SDN topology setup complete")
-        print(f"- Switches: {len(self.controller.switches)}")
-        print(f"- Links: {len(self.controller.topology.edges)}")
-        print(f"- Hosts: {sum(len(hosts) for hosts in host_mappings.values())}")
+        print("SDN拓扑设置完成")
+        print(f"- 交换机: {len(self.controller.switches)}")
+        print(f"- 链路: {len(self.controller.topology.edges)}")
+        print(f"- 主机: {sum(len(hosts) for hosts in host_mappings.values())}")
 
     def inject_packet(self, packet: NetworkPacket):
         """向网络注入数据包"""
@@ -385,7 +385,7 @@ class SDNNetwork:
         self.network_thread = threading.Thread(target=self._network_loop)
         self.network_thread.daemon = True
         self.network_thread.start()
-        print("SDN network started")
+        print("SDN网络已启动")
 
     def stop_network(self):
         """停止网络处理"""

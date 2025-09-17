@@ -111,7 +111,7 @@ class TrafficGenerator:
 
     def start_traffic_generation(self, patterns: List[str], sequential=True):
         """开始生成流量"""
-        print(f"Starting traffic generation with patterns: {patterns}")
+        print(f"开始生成流量模式: {patterns}")
         self.running = True
         self.stats.clear()
 
@@ -128,7 +128,7 @@ class TrafficGenerator:
 
     def stop_traffic_generation(self):
         """停止流量生成"""
-        print("Stopping traffic generation...")
+        print("停止生成流量...")
         self.running = False
 
         for thread in self.threads:
@@ -138,7 +138,7 @@ class TrafficGenerator:
                 pass
 
         self.threads.clear()
-        print("Traffic generation stopped")
+        print("流量生成已停止")
 
     def _sequential_generation(self, patterns: List[str]):
         """顺序生成流量模式"""
@@ -198,7 +198,7 @@ class TrafficGenerator:
             # 等待下个包生成时间
             time.sleep(packet_interval)
 
-        print(f"Pattern {pattern.name}: Generated {packets_generated} packets")
+        print(f"模式 {pattern.name}: 已生成 {packets_generated} 个数据包")
 
     def _create_packet(self, pattern: TrafficPattern) -> Optional[NetworkPacket]:
         """根据模式创建数据包"""
