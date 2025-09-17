@@ -1,107 +1,231 @@
 #!/bin/bash
-# Network Intelligence System Demo Runner
-# Automated script to run the complete demonstration
 
-set -e  # Exit on any error
+# SDN + AI 网络异常检测系统演示脚本
+# 自动安装依赖并运行完整演示
 
-echo "🌐 Network Intelligence System Demo"
-echo "=================================="
-echo
+set -e
 
-# Check if running as root (needed for Mininet)
-if [[ $EUID -ne 0 ]]; then
-   echo "❌ This demo requires root privileges for Mininet"
-   echo "Please run with: sudo ./run_demo.sh"
-   exit 1
-fi
+echo "======================================================"
+echo "SDN + AI 网络异常检测系统演示"
+echo "======================================================"
 
-# Set script directory as working directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-echo "📁 Working directory: $SCRIPT_DIR"
-echo
+# 日志函数
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
 
-# Check Python version
-echo "🐍 Checking Python version..."
-python3 --version
-echo
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
 
-# Install Python dependencies if requirements.txt exists
-if [ -f "requirements.txt" ]; then
-    echo "📦 Installing Python dependencies..."
-    pip3 install -r requirements.txt
-    echo
-fi
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
 
-# Create necessary directories
-echo "📁 Creating directories..."
-mkdir -p data logs models results templates
-echo "  ✅ Directories created"
-echo
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
 
-# Clean up any previous Mininet instances
-echo "🧹 Cleaning up previous instances..."
-mn -c > /dev/null 2>&1 || true
-echo "  ✅ Cleanup completed"
-echo
+# 检查Python版本
+check_python() {
+    log_info "检查Python环境..."
 
-# Check available demo modes
-echo "🎬 Available demo modes:"
-echo "  1. Interactive Demo (step-by-step with user prompts)"
-echo "  2. Automated Demo (runs automatically for 5 minutes)"
-echo "  3. Quick Test (basic functionality test)"
-echo
+    if command -v python3 &> /dev/null; then
+        PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+        log_success "Python版本: $PYTHON_VERSION"
 
-# Get user choice
-read -p "Select demo mode (1-3): " choice
-
-case $choice in
-    1)
-        echo "🎭 Starting Interactive Demo..."
-        echo "Follow the prompts to proceed through each step"
-        echo
-        python3 demo.py --mode interactive
-        ;;
-    2)
-        echo "🤖 Starting Automated Demo..."
-        echo "Demo will run automatically for 5 minutes"
-        echo
-        python3 demo.py --mode automated --duration 300
-        ;;
-    3)
-        echo "⚡ Starting Quick Test..."
-        echo "Basic functionality test (2 minutes)"
-        echo
-        python3 demo.py --mode automated --duration 120
-        ;;
-    *)
-        echo "❌ Invalid choice. Please run the script again."
+        # 检查版本是否 >= 3.7
+        if python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 7) else 1)'; then
+            log_success "Python版本满足要求 (>= 3.7)"
+        else
+            log_error "需要Python 3.7或更高版本"
+            exit 1
+        fi
+    else
+        log_error "未找到Python3，请先安装Python"
         exit 1
-        ;;
-esac
+    fi
+}
 
-echo
-echo "🎉 Demo completed!"
-echo
-echo "📊 Generated files:"
-find data/ -name "*.json" 2>/dev/null | head -5
-echo
-find results/ -name "*.*" 2>/dev/null | head -5
-echo
+# 安装依赖
+install_dependencies() {
+    log_info "安装Python依赖包..."
 
-echo "📝 To run individual components:"
-echo "  Network Topology:    sudo python3 src/mininet_topology/custom_topology.py"
-echo "  SDN Controller:      ryu-manager src/sdn_controller/intelligent_controller.py"
-echo "  Traffic Generator:   python3 src/mininet_topology/traffic_generator.py"
-echo "  AI Detection:        python3 src/ai_detection/anomaly_detector.py"
-echo "  Dashboard:           python3 src/monitoring/dashboard.py"
-echo "  Performance Tests:   python3 src/utils/performance_tester.py"
-echo
+    if [ -f "requirements.txt" ]; then
+        # 优先使用系统包管理器安装
+        log_info "尝试使用系统包管理器安装..."
 
-echo "🌐 Access points:"
-echo "  Dashboard: http://localhost:5000"
-echo "  API:       http://localhost:5000/api/"
-echo
+        # 检测系统类型
+        if command -v apt &> /dev/null; then
+            # Ubuntu/Debian
+            sudo apt update
+            sudo apt install -y python3-numpy python3-pandas python3-sklearn python3-flask python3-plotly python3-networkx || {
+                log_warning "系统包安装失败，使用pip安装..."
+                install_with_pip
+            }
+        elif command -v yum &> /dev/null; then
+            # CentOS/RHEL
+            sudo yum install -y python3-numpy python3-pandas python3-scikit-learn python3-flask || {
+                log_warning "系统包安装失败，使用pip安装..."
+                install_with_pip
+            }
+        else
+            log_warning "未识别的系统，使用pip安装..."
+            install_with_pip
+        fi
 
-echo "✅ Demo script completed successfully!"
+        log_success "依赖包安装完成"
+    else
+        log_error "未找到requirements.txt文件"
+        exit 1
+    fi
+}
+
+# 使用pip安装
+install_with_pip() {
+    log_info "使用pip安装依赖..."
+
+    # 尝试不同的pip安装方法
+    if python3 -m pip install -r requirements.txt; then
+        log_success "pip安装成功"
+    elif pip3 install -r requirements.txt; then
+        log_success "pip3安装成功"
+    elif python3 -m pip install --user -r requirements.txt; then
+        log_success "pip用户安装成功"
+    else
+        log_error "pip安装失败，请手动安装依赖"
+        echo "手动安装命令："
+        echo "pip3 install numpy pandas scikit-learn flask plotly networkx"
+        exit 1
+    fi
+}
+
+# 检查依赖包
+check_dependencies() {
+    log_info "验证依赖包..."
+
+    PACKAGES=("numpy" "pandas" "sklearn" "flask" "plotly" "networkx")
+    MISSING_PACKAGES=()
+
+    for package in "${PACKAGES[@]}"; do
+        if python3 -c "import $package" 2>/dev/null; then
+            log_success "✓ $package"
+        else
+            log_warning "✗ $package"
+            MISSING_PACKAGES+=("$package")
+        fi
+    done
+
+    if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
+        log_error "缺少依赖包: ${MISSING_PACKAGES[*]}"
+        log_info "正在尝试重新安装..."
+        install_with_pip
+
+        # 再次检查
+        for package in "${MISSING_PACKAGES[@]}"; do
+            if ! python3 -c "import $package" 2>/dev/null; then
+                log_error "无法安装 $package，请手动安装"
+                exit 1
+            fi
+        done
+    fi
+
+    log_success "所有依赖包验证通过"
+}
+
+# 准备演示环境
+prepare_demo() {
+    log_info "准备演示环境..."
+
+    # 创建必要的目录
+    mkdir -p models
+    mkdir -p logs
+
+    # 检查端口是否被占用
+    if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
+        log_warning "端口8080被占用，尝试停止占用进程..."
+        pkill -f "python.*8080" || true
+        sleep 2
+    fi
+
+    log_success "演示环境准备完成"
+}
+
+# 运行演示
+run_demo() {
+    log_info "启动SDN + AI网络异常检测系统演示..."
+
+    echo ""
+    echo "======================================================"
+    echo "演示系统特性："
+    echo "  ✓ SDN网络拓扑模拟 (4交换机6主机)"
+    echo "  ✓ 智能流量生成 (正常+攻击模式)"
+    echo "  ✓ AI异常检测 (机器学习+统计分析)"
+    echo "  ✓ 实时Web监控界面"
+    echo "  ✓ 性能测试和报告"
+    echo ""
+    echo "演示场景："
+    echo "  1. 基线建立 (60秒)"
+    echo "  2. DDoS攻击检测 (45秒)"
+    echo "  3. 端口扫描检测 (30秒)"
+    echo "  4. 大文件传输检测 (25秒)"
+    echo "  5. 混合攻击场景 (40秒)"
+    echo ""
+    echo "监控界面: http://localhost:8080"
+    echo "======================================================"
+    echo ""
+
+    # 运行主演示程序
+    if python3 main_demo.py; then
+        log_success "演示完成"
+    else
+        log_error "演示运行失败"
+        exit 1
+    fi
+}
+
+# 清理函数
+cleanup() {
+    log_info "清理演示环境..."
+
+    # 停止可能的后台进程
+    pkill -f "main_demo.py" 2>/dev/null || true
+    pkill -f "web_dashboard.py" 2>/dev/null || true
+
+    log_success "清理完成"
+}
+
+# 信号处理
+trap cleanup EXIT INT TERM
+
+# 主函数
+main() {
+    echo "开始SDN + AI网络异常检测系统演示安装和运行..."
+    echo ""
+
+    # 执行各个步骤
+    check_python
+    install_dependencies
+    check_dependencies
+    prepare_demo
+    run_demo
+
+    echo ""
+    log_success "演示程序执行完成！"
+    echo ""
+    echo "如需重新运行演示，请执行："
+    echo "  python3 main_demo.py"
+    echo ""
+    echo "或者："
+    echo "  ./run_demo.sh"
+}
+
+# 执行主函数
+main "$@"
